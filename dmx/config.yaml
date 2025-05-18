@@ -11,25 +11,15 @@ arch:
 startup: services
 boot: auto
 host_network: false
-privileged:
-  - usb
+# privileged:
+#   - usb
+devices:
+  - /dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN467365-if00-port0
 map:
   - config:rw
   - ssl
   - share:rw
   - addons_config:rw
-options:
-  serial_port: "/dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN467365-if00-port0"
-  mqtt_host: "core-mosquitto"
-  mqtt_port: 1883
-  mqtt_username: ""
-  mqtt_password: ""
-schema:
-  serial_port: device(subsystem=tty)
-  mqtt_host: str
-  mqtt_port: int
-  mqtt_username: str
-  mqtt_password: str
 ports:
   12345/tcp: 12345
 image: "inzania/dmx"
