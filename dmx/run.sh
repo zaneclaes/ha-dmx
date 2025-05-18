@@ -1,10 +1,11 @@
-#!/bin/bash
+#!/usr/bin/with-contenv bashio
 
-# Start OLA
-/usr/sbin/olad -l
+# Load config
+DMX_PORT=$(bashio::config 'serial_port')
+MQTT_HOST=$(bashio::config 'mqtt_host')
+MQTT_PORT=$(bashio::config 'mqtt_port')
+MQTT_USER=$(bashio::config 'mqtt_username')
+MQTT_PASS=$(bashio::config 'mqtt_password')
 
-# Wait a bit for OLA to start
-sleep 3
-
-# Start dmx2mqtt (customize with env vars if needed)
-dmx2mqtt --dmx.device /dev/ttyUSB0 --mqtt.host $MQTT_HOST
+echo "Starting DMX2MQTT on $DMX_PORT with MQTT $MQTT_HOST:$MQTT_PORT"
+exec python3 main.py --serial "$DMX_PORT" --mqtt-host "$MQTT_HOST" --mqtt-port "$MQTT_PORT" --mqtt-user "$MQTT_USER" --mqtt-password "$MQTT_PASS"

@@ -1,18 +1,35 @@
-name: "DMX"
-version: "1.1.0"
+name: "DMX Control Bridge"
 slug: dmx
-description: >-
-  "Long description"
+description: >
+  A Home Assistant add-on to control DMX512-compatible lighting equipment using a USB-to-DMX interface.
+version: "1.1.0"
+url: "https://github.com/yourusername/ha-dmx"
 arch:
   - amd64
-url: "http://inzania.com"
-ports:
-  123/tcp: 123
+  - aarch64
+  - armv7
+startup: services
+boot: auto
+host_network: false
+privileged:
+  - usb
 map:
-  - type: share
-    read_only: False
-  - type: ssl
-  - type: homeassistant_config
-    read_only: False
-    path: /custom/config/path
-image: inzania/dmx
+  - config:rw
+  - ssl
+  - share:rw
+  - addons_config:rw
+options:
+  serial_port: "/dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN467365-if00-port0"
+  mqtt_host: "core-mosquitto"
+  mqtt_port: 1883
+  mqtt_username: ""
+  mqtt_password: ""
+schema:
+  serial_port: device(subsystem=tty)
+  mqtt_host: str
+  mqtt_port: int
+  mqtt_username: str
+  mqtt_password: str
+ports:
+  12345/tcp: 12345
+image: "inzania/dmx"
