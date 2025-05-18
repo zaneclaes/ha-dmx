@@ -4,7 +4,7 @@ ls /dev/ttyUSB*
 ls -l /dev/serial/by-id/
 
 # Start OLA
-/usr/bin/olad -l 3 > /dev/null 2>&1 &
+/usr/bin/olad -l 4 > /dev/null 2>&1 &
 
 # Wait a bit for OLA to start
 sleep 3
