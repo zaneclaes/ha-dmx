@@ -13,6 +13,7 @@ client = wrapper.Client()
 mqtt_host = os.environ.get("MQTT_HOST", "core-mosquitto")
 mqtt_port = int(os.environ.get("MQTT_PORT", "1883"))
 mqttc = mqtt.Client(protocol=mqtt.MQTTv5)
+mqttc.username_pw_set("dmx", "test1234")
 
 def on_mqtt_message(client_mqtt, userdata, msg):
     try:
