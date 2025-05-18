@@ -1,14 +1,18 @@
-name: dmx
-version: "1.0.0"
+name: "DMX"
+version: "1.1.0"
 slug: dmx
-description: A custom add-on to bridge DMX via OLA and MQTT
-startup: services
-boot: auto
-host_network: true
-privileged:
-  - sys_rawio
-  - usb
-devices:
-  - /dev/ttyUSB0
-options: {}
-schema: {}
+description: >-
+  "Long description"
+arch:
+  - amd64
+url: "http://inzania.com"
+ports:
+  123/tcp: 123
+map:
+  - type: share
+    read_only: False
+  - type: ssl
+  - type: homeassistant_config
+    read_only: False
+    path: /custom/config/path
+image: inzania/dmx
