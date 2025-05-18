@@ -30,6 +30,8 @@ RUN useradd -m dmxuser
 # Create the .ola config directory and copy the file
 RUN mkdir -p /home/dmxuser/.ola
 COPY ola-usbserial.conf /home/dmxuser/.ola/ola-usbserial.conf
+COPY ola-ftdidmx.conf /home/dmxuser/.ola/ola-ftdidmx.conf
+COPY ola.conf /home/dmxuser/.ola/ola.conf
 
 # Make sure permissions are correct if using non-root
 RUN chown -R dmxuser:dmxuser /home/dmxuser/.ola
