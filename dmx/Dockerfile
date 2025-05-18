@@ -24,4 +24,14 @@ RUN pip3 install -r requirements.txt
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
+# Create non-root user
+RUN useradd -m dmxuser
+
+# Set permissions on OLA spool and config directories
+RUN mkdir -p /var/lib/ola /var/run/ola /etc/ola && \
+    chown -R dmxuser /var/lib/ola /var/run/ola /etc/ola
+
+# Switch to non-root
+USER dmxuser
+
 CMD ["/run.sh"]
