@@ -1,0 +1,18 @@
+name: DMX Bridge (OLA + MQTT)
+version: "1.0.0"
+slug: dmx_bridge
+description: Runs OLA and bridges DMX to MQTT
+startup: services
+boot: auto
+panel_icon: mdi:spotlight
+ports:
+  9090/tcp: 9090
+ingress: false
+host_network: true
+privileged:
+  - sys_rawio
+  - usb
+devices:
+  - /dev/ttyUSB0
+environment:
+  MQTT_HOST: mqtt://casa-fauxnita.local
