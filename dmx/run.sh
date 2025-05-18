@@ -4,7 +4,7 @@ ls /dev/ttyUSB*
 ls -l /dev/serial/by-id/
 
 # Start OLA
-/usr/bin/olad --dmx-device usb-ENTTEC_DMX_USB_PRO_EN467365-if00-port0 > /dev/null 2>&1 &
+/usr/bin/olad --dmx-device /dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN467365-if00-port0 > /dev/null 2>&1 &
 
 # Wait a bit for OLA to start
 sleep 3
