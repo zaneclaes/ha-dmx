@@ -1,15 +1,12 @@
 #!/bin/bash
 
-
-chgrp dmxuser /dev/ttyUSB0
-chmod 660 /dev/ttyUSB0
-
+sudo chmod 666 /dev/ttyUSB0
 ls /dev/ttyUSB*
 ls -l /dev/serial/by-id/
 
 
 # Start OLA
-su - dmxuser -c 'HOME=/home/dmxuser /usr/bin/olad -l 4 &'
+/usr/bin/olad -l 4 &
 
 # Wait a bit for OLA to start
 sleep 3
