@@ -1,7 +1,5 @@
 #!/bin/bash
 
-ola_dev_info
-
 ls /dev/ttyUSB*
 ls -l /dev/serial/by-id/
 
@@ -11,7 +9,9 @@ ls -l /dev/serial/by-id/
 # Wait a bit for OLA to start
 sleep 3
 
-ola_patch -d 0 -o 0 -u 1
+ola_dev_info
+
+ola_patch -d 0 -u 1
 
 # Start dmx2mqtt (customize with env vars if needed)
 python3 -u /app/bridge.py
