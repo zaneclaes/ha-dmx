@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Start OLA
-/usr/bin/olad -l 3 > /dev/null 2>&1 &
-
 ola_dev_info
 
-ola_patch -l
+ls /dev/ttyUSB*
+ls -l /dev/serial/by-id/
+
+# Start OLA
+/usr/bin/olad --dmx-device /dev/dmx > /dev/null 2>&1 &
 
 # Wait a bit for OLA to start
 sleep 3
