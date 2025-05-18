@@ -2,7 +2,7 @@ name: "DMX Control Bridge"
 slug: dmx
 description: >
   A Home Assistant add-on to control DMX512-compatible lighting equipment using a USB-to-DMX interface.
-version: "1.1.8"
+version: "1.1.9"
 url: "https://github.com/zaneclaes/ha-dmx"
 arch:
   - amd64
@@ -11,8 +11,8 @@ arch:
 startup: services
 boot: auto
 host_network: false
-# privileged:
-#   - usb
+privileged:
+  - usb
 devices:
   - /dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN467365-if00-port0
 map:
