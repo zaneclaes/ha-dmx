@@ -12,7 +12,7 @@ client = wrapper.Client()
 # MQTT config
 mqtt_host = os.environ.get("MQTT_HOST", "core-mosquitto")
 mqtt_port = int(os.environ.get("MQTT_PORT", "1883"))
-mqttc = mqtt.Client()
+mqttc = mqtt.Client(protocol=mqtt.MQTTv5)
 
 def on_mqtt_message(client_mqtt, userdata, msg):
     try:
@@ -23,6 +23,10 @@ def on_mqtt_message(client_mqtt, userdata, msg):
     except Exception as e:
         print("Error:", e)
 
+def on_connect(client, userdata, flags, reasonCode, properties):
+    print(f"Connected with reason code: {reasonCode}")
+
+mqttc.on_connect = on_connect
 mqttc.connect(mqtt_host, mqtt_port, 60)
 mqttc.on_message = on_mqtt_message
 mqttc.subscribe("dmx/set/+")
