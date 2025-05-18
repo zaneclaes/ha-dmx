@@ -14,6 +14,7 @@ host_network: false
 # privileged: true
 devices:
   - /dev/ttyUSB0
+full_access: true
 map:
   - config:rw
   - ssl
