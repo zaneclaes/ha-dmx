@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Start OLA
-/usr/bin/olad --allow-root -l 3 &
+/usr/bin/olad -l 3 &
 
 # Wait a bit for OLA to start
 sleep 3
