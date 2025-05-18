@@ -1,0 +1,14 @@
+name: dmx
+version: "1.0.0"
+slug: dmx
+description: A custom add-on to bridge DMX via OLA and MQTT
+startup: services
+boot: auto
+host_network: true
+privileged:
+  - sys_rawio
+  - usb
+devices:
+  - /dev/ttyUSB0
+options: {}
+schema: {}
