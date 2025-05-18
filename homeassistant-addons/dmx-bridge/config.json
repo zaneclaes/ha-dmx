@@ -1,0 +1,19 @@
+{
+  "name": "DMX Bridge (OLA + MQTT)",
+  "version": "1.0",
+  "slug": "dmx_bridge",
+  "description": "DMX over MQTT bridge using OLA and dmx2mqtt",
+  "arch": ["amd64", "armhf", "armv7", "aarch64"],
+  "startup": "services",
+  "boot": "auto",
+  "ingress": false,
+  "panel_icon": "mdi:spotlight",
+  "ports": {
+    "9090/tcp": 9090
+  },
+  "devices": ["/dev/ttyUSB0"],
+  "privileged": ["sys_rawio", "usb"],
+  "environment": {
+    "MQTT_HOST": "mqtt://casa-fauxnita.local"
+  }
+}
