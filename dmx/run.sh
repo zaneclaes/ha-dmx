@@ -7,4 +7,4 @@
 sleep 3
 
 # Start dmx2mqtt (customize with env vars if needed)
-python3 /app/bridge.py
+python3 -u /app/bridge.py
