@@ -38,8 +38,5 @@ RUN chown -R dmxuser:dmxuser /home/dmxuser/.ola
 RUN mkdir -p /var/lib/ola /var/run/ola /etc/ola && \
     chown -R dmxuser /var/lib/ola /var/run/ola /etc/ola
 
-# Switch to non-root
-USER dmxuser
-
 EXPOSE 9090
 CMD ["/run.sh"]
