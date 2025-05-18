@@ -1,7 +1,8 @@
 #!/bin/bash
 
 
-chmod 666 /dev/ttyUSB0
+chgrp dmxuser /dev/ttyUSB0
+chmod 660 /dev/ttyUSB0
 
 ls /dev/ttyUSB*
 ls -l /dev/serial/by-id/
