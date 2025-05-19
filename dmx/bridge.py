@@ -88,7 +88,7 @@ def on_mqtt_message(client_mqtt, userdata, msg):
 
             brightness = payload.get("brightness", 255)
             col = payload.get("color", {"r": 255, "g": 255, "b": 255})
-            send_dmx(light_num, col.r, col.g, col.b, brightness)
+            send_dmx(light_num, col['r'], col['g'], col['b'], brightness)
         # if topic_parts[1] == "set":  # dmx/set/<channel>
         #     channel = int(topic_parts[2])
         #     value = int(msg.payload)
