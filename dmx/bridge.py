@@ -51,12 +51,12 @@ def send_dmx(light_num, r, g, b, brightness):
         "brightness": brightness,
         "rgb_color": [r, g, b]
     }
-    mqtt_client.publish(f'dmx/{light_num}/state', json.dumps(dmx_state[light_num]), retain=True)
+    mqttc.publish(f'dmx/{light_num}/state', json.dumps(dmx_state[light_num]), retain=True)
 
 def publish_config():
     for fixture in range(1, NUM_LIGHTS):  # 3 channels per RGB fixture
         config_topic = f"homeassistant/light/dmx_{fixture}/config"
-        mqtt_client.publish(config_topic, json.dumps({
+        mqttc.publish(config_topic, json.dumps({
             "name": f"DMX RGB Light {fixture}",
             "unique_id": f"dmx_{fixture}",
             "schema": "json",
@@ -70,7 +70,7 @@ def publish_config():
             "brightness": 0,
             "rgb_color": [0, 0, 0]
         }
-        mqtt_client.publish(f'dmx/{fixture}/state', json.dumps(dmx_state[fixture]), retain=True)
+        mqttc.publish(f'dmx/{fixture}/state', json.dumps(dmx_state[fixture]), retain=True)
 
 def on_mqtt_message(client_mqtt, userdata, msg):
     print(f'{msg.topic}: {msg.payload}')
