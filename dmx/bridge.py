@@ -62,7 +62,8 @@ def publish_config():
             "command_topic": f"dmx/{fixture}/set",
             "state_topic": f"dmx/{fixture}/state",
             "brightness": True,
-            "rgb": True
+            "color_mode": True,
+            "supported_color_modes": ["rgb"]
         }), retain=True)
         dmx_state[fixture] = {
             "state": "OFF",
