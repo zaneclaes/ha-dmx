@@ -24,25 +24,50 @@ RUN pip3 install -r requirements.txt
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    g++ \
+    make \
+    autoconf \
+    automake \
+    libtool \
+    pkg-config \
+    bison \
+    flex \
+    libcppunit-dev \
+    libmicrohttpd-dev \
+    libprotobuf-dev \
+    protobuf-compiler \
+    python3 \
+    python3-pip \
+    python3-protobuf \
+    libusb-1.0-0-dev \
+    libftdi-dev \
+    libncurses-dev \
+    libavahi-client-dev \
+    libavahi-common-dev \
+    libunwind-dev \
+    protobuf-compiler \
+    libprotobuf-dev \
+    libprotoc-dev \
+    uuid-dev \
+    wget
 
-# Create non-root user
-RUN useradd -m dmxuser
+# Clone OLA source
+RUN git clone https://github.com/OpenLightingProject/ola.git /ola
 
-# Create the .ola config directory and copy the file
-RUN mkdir -p /home/dmxuser/.ola
-COPY ola/ /home/dmxuser/.ola/
+# Patch OLA to disable root check and Avahi
+WORKDIR /ola
+RUN ls
+RUN autoreconf -i && \
+    ./configure --disable-root-check --disable-avahi && \
+    make -j$(nproc) && \
+    make install
 
-# Make sure permissions are correct if using non-root
-RUN chown -R dmxuser:dmxuser /home/dmxuser/.ola
-
-# Set permissions on OLA spool and config directories
-RUN mkdir -p /var/lib/ola /var/run/ola /etc/ola && \
-    chown -R dmxuser /var/lib/ola /var/run/ola /etc/ola
-
-RUN usermod -aG sudo dmxuser && \
-    echo 'dmxuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+# Create runtime directories
+RUN mkdir -p /root/.ola
+COPY ola/ /home/root/.ola/
 
 EXPOSE 9090
 CMD ["/run.sh"]
