@@ -14,8 +14,6 @@ import os
 UNIVERSE = 1
 DMX_SIZE = 512
 data = array.array('B', [0] * DMX_SIZE)
-wrapper = ClientWrapper()
-client = wrapper.Client()
 
 with open('/data/options.json', 'r') as f:
     options = json.load(f)
@@ -42,7 +40,7 @@ def patch_universe():
     print(f'OLA creating Universe #{UNIVERSE} with device {device_num} and port {output_port}')
     # Optional direction (in case your version requires it)
     try:
-        client2.PatchPort(UNIVERSE, device_num, output_port, patched_callback)  # Newer versions
+        client2.PatchDmxPort(UNIVERSE, device_num, output_port, patched_callback)  # Newer versions
     except TypeError:
         # For older versions, try with direction
         from ola.OlaClient import OLA_PORT_OUTPUT
@@ -60,6 +58,9 @@ mqttc = mqtt.Client(protocol=mqtt.MQTTv5)
 mqtt_user = options.get('mqtt_user') # os.environ.get("MQTT_USER", "dmx")
 mqtt_password = options.get('mqtt_password') # os.environ.get("MQTT_PASSWORD", "test1234")
 mqttc.username_pw_set(mqtt_user, mqtt_password)
+
+wrapper = ClientWrapper()
+client = wrapper.Client()
 
 def send_dmx():
     client.SendDmx(UNIVERSE, data, lambda state: None)
