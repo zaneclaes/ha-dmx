@@ -12,7 +12,8 @@ sleep 3
 echo "--- devices ---"
 ola_dev_info
 
-ola_patch -u 1 -d "${DEVICE_NUM}" -p "${OUTPUT_PORT}"
+echo "Creating Universe #1 for Device #${DEVICE_NUM} and Port #${OUTPUT_PORT}"
+ola_patch -u 1 -d "${DEVICE_NUM:-2}" -p "${OUTPUT_PORT:-1}"
 
 echo "--- bridge ---"
 
