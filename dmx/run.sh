@@ -12,9 +12,6 @@ sleep 3
 echo "--- devices ---"
 ola_dev_info
 
-echo "--- universes ---"
-ola_universe_info
-
 # ola_patch -d 0 -u 1
 
 echo "--- bridge ---"
