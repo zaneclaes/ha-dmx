@@ -24,6 +24,9 @@ RUN pip3 install -r requirements.txt
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 # Create non-root user
 RUN useradd -m dmxuser
 
@@ -40,9 +43,6 @@ RUN mkdir -p /var/lib/ola /var/run/ola /etc/ola && \
 
 RUN usermod -aG sudo dmxuser && \
     echo 'dmxuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-# Switch to non-root
-USER dmxuser
 
 EXPOSE 9090
 CMD ["/run.sh"]
