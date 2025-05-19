@@ -38,6 +38,11 @@ ola = wrapper.Client()
 
 def send_dmx(light_num):
     dmx_state[light_num]['state'] = "ON" if dmx_state[light_num]['brightness'] > 0 else "OFF"
+    dmx_state[light_num]['rgb_color'] = [
+        int(dmx_state[light_num]['color']['r']),
+        int(dmx_state[light_num]['color']['g']),
+        int(dmx_state[light_num]['color']['b'])
+    ]
     print(f'Updating Light #{light_num}: {json.dumps(dmx_state[light_num])}')
     channel_start = ((light_num - 1) * BYTES_PER_LIGHT)
     data[channel_start] = int(dmx_state[light_num]['brightness'])
