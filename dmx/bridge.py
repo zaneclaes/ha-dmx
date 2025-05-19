@@ -41,9 +41,9 @@ def send_dmx(light_num):
     print(f'Updating Light #{light_num}: {json.dumps(dmx_state[light_num])}')
     channel_start = ((light_num - 1) * BYTES_PER_LIGHT)
     data[channel_start] = int(dmx_state[light_num]['brightness'])
-    data[channel_start + 1] = int(dmx_state[light_num]['rgb_color'][0])
-    data[channel_start + 2] = int(dmx_state[light_num]['rgb_color'][1])
-    data[channel_start + 3] = int(dmx_state[light_num]['rgb_color'][2])
+    data[channel_start + 1] = int(dmx_state[light_num]['color']['r'])
+    data[channel_start + 2] = int(dmx_state[light_num]['color']['g'])
+    data[channel_start + 3] = int(dmx_state[light_num]['color']['b'])
 
     ola.SendDmx(UNIVERSE, data, lambda state: None)
     mqttc.publish(f'dmx/{light_num}/state', json.dumps(dmx_state[light_num]), retain=True)
@@ -64,7 +64,7 @@ def publish_config():
         dmx_state[fixture] = {
             "state": "OFF",
             "brightness": 0,
-            "rgb_color": [255, 255, 255]
+            "color": {'r': 255, 'g': 255, 'b': 255}
         }
         mqttc.publish(f'dmx/{fixture}/state', json.dumps(dmx_state[fixture]), retain=True)
 
@@ -90,13 +90,12 @@ def on_mqtt_message(client_mqtt, userdata, msg):
                 if state == "ON":
                     if dmx_state[light_num]['brightness'] == 0:
                         dmx_state[light_num]['brightness'] = 255
-                    if dmx_state[light_num]['rgb_color'][0] == 0 and dmx_state[light_num]['rgb_color'][1] == 0 and dmx_state[light_num]['rgb_color'][2] == 0:
-                        dmx_state[light_num]['rgb_color'] = [255, 255, 255]
+                    if dmx_state[light_num]['color']['r'] == 0 and dmx_state[light_num]['color']['g'] == 0 and dmx_state[light_num]['color']['b'] == 0:
+                        dmx_state[light_num]['color'] = {'r': 255, 'g': 255, 'b': 255}
                 if state == "OFF" and dmx_state[light_num]['brightness'] > 0:
                     dmx_state[light_num]['brightness'] = 0
             if 'color' in payload:
-                col = payload.get("color")
-                dmx_state[light_num]['rgb_color'] = [col['r'], col['g'], col['b']]
+                dmx_state[light_num]['color'] = payload.get("color")
             send_dmx(light_num)
     except Exception as e:
         print("MQTT parse error:", e)
