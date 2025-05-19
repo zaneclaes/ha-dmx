@@ -1,6 +1,14 @@
+print("MQTT startup...")
+
 import array
+print("MQTT startup2...")
+
 import paho.mqtt.client as mqtt
+print("MQTT startup3...")
+
 from ola.ClientWrapper import ClientWrapper
+print("MQTT startup4...")
+
 import os
 
 print("MQTT startup...")
