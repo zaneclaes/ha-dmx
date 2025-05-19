@@ -30,7 +30,7 @@ if device_num is None or output_port is None:
 
 def patch_universe():
     wrapper2 = ClientWrapper()
-    client2 = wrapper.Client()
+    client2 = wrapper2.Client()
 
     def patched_callback(status):
         if status.Succeeded():
@@ -40,7 +40,14 @@ def patch_universe():
         wrapper2.Stop()
 
     print(f'OLA creating Universe #{UNIVERSE} with device {device_num} and port {output_port}')
-    client2.PatchPort(UNIVERSE, device_num, output_port, patched_callback)
+    # Optional direction (in case your version requires it)
+    try:
+        client2.PatchPort(UNIVERSE, device_num, output_port, patched_callback)  # Newer versions
+    except TypeError:
+        # For older versions, try with direction
+        from ola.OlaClient import OLA_PORT_OUTPUT
+        client2.PatchPort(UNIVERSE, device_num, output_port, OLA_PORT_OUTPUT, patched_callback)
+
     wrapper2.Run()
 
 patch_universe()
