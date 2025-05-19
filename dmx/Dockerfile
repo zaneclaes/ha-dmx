@@ -2,28 +2,6 @@ FROM debian:bullseye
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install OLA and dependencies
-RUN apt-get update && \
-    apt-get install -y \
-        python3-pip git mosquitto-clients \
-        && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    ola \
-    ola-python \
-    && apt-get clean
-
-WORKDIR /app
-
-COPY bridge.py /app/
-COPY requirements.txt /app/
-RUN pip3 install -r requirements.txt
-
-COPY run.sh /run.sh
-RUN chmod +x /run.sh
-
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -59,11 +37,18 @@ RUN git clone https://github.com/OpenLightingProject/ola.git /ola
 
 # Patch OLA to disable root check and Avahi
 WORKDIR /ola
-RUN ls
 RUN autoreconf -i && \
     ./configure --disable-root-check --disable-avahi && \
     make -j$(nproc) && \
     make install
+
+WORKDIR /app
+COPY bridge.py /app/
+COPY requirements.txt /app/
+RUN pip3 install -r requirements.txt
+
+COPY run.sh /run.sh
+RUN chmod +x /run.sh
 
 # Create runtime directories
 RUN mkdir -p /root/.ola
