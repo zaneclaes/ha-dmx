@@ -69,7 +69,9 @@ def publish_config():
         dmx_state[fixture] = {
             "state": "OFF",
             "brightness": 0,
-            "color": {'r': 255, 'g': 255, 'b': 255}
+            'color_mode': 'rgb',
+            "color": {'r': 255, 'g': 255, 'b': 255},
+            'rgb_color': [255, 255, 255]
         }
         mqttc.publish(f'dmx/{fixture}/state', json.dumps(dmx_state[fixture]), retain=True)
 
