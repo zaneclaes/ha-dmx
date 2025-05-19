@@ -64,7 +64,7 @@ def publish_config():
         dmx_state[fixture] = {
             "state": "OFF",
             "brightness": 0,
-            "rgb_color": [0, 0, 0]
+            "rgb_color": [255, 255, 255]
         }
         mqttc.publish(f'dmx/{fixture}/state', json.dumps(dmx_state[fixture]), retain=True)
 
@@ -85,6 +85,15 @@ def on_mqtt_message(client_mqtt, userdata, msg):
 
             if 'brightness' in payload:
                 dmx_state[light_num]['brightness'] = payload.get("brightness", 255)
+            if 'state' in payload:
+                state = payload.get('state')
+                if state == "ON":
+                    if dmx_state[light_num]['brightness'] == 0:
+                        dmx_state[light_num]['brightness'] = 255
+                    if dmx_state[light_num]['rgb_color'][0] == 0 and dmx_state[light_num]['rgb_color'][1] == 0 and dmx_state[light_num]['rgb_color'][2] == 0:
+                        dmx_state[light_num]['rgb_color'] = [255, 255, 255]
+                if state == "OFF" and dmx_state[light_num]['brightness'] > 0:
+                    dmx_state[light_num]['brightness'] = 0
             if 'color' in payload:
                 col = payload.get("color")
                 dmx_state[light_num]['rgb_color'] = [col['r'], col['g'], col['b']]
