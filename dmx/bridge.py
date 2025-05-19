@@ -5,6 +5,8 @@ print(sys.path)
 sys.path.append('/usr/local/lib/python3.9/site-packages')
 
 import array
+import json
+import time
 import paho.mqtt.client as mqtt
 from ola.ClientWrapper import ClientWrapper
 import os
@@ -15,13 +17,41 @@ data = array.array('B', [0] * DMX_SIZE)
 wrapper = ClientWrapper()
 client = wrapper.Client()
 
+with open('/data/options.json', 'r') as f:
+    options = json.load(f)
+
+# Create the Universe
+device_num = options.get('device_num')
+output_port = options.get('output_port')
+
+if device_num is None or output_port is None:
+    print("Missing device_num or output_port in options.json")
+    sys.exit(1)
+
+def patch_universe():
+    wrapper2 = ClientWrapper()
+    client2 = wrapper.Client()
+
+    def patched_callback(status):
+        if status.Succeeded():
+            print(f"Universe {UNIVERSE} successfully patched to device {device_num}, port {output_port}")
+        else:
+            print(f"Failed to patch universe {UNIVERSE} to device {device_num}, port {output_port}")
+        wrapper2.Stop()
+
+    print(f'OLA creating Universe #{UNIVERSE} with device {device_num} and port {output_port}')
+    client2.PatchPort(UNIVERSE, device_num, output_port, patched_callback)
+    wrapper2.Run()
+
+patch_universe()
+
 # MQTT config
-mqtt_host = os.environ.get("MQTT_HOST", "core-mosquitto")
-mqtt_port = int(os.environ.get("MQTT_PORT", "1883"))
+mqtt_host = options.get('mqtt_host') # os.environ.get("MQTT_HOST", "core-mosquitto")
+mqtt_port = int(options.get('mqtt_port')) # int(os.environ.get("MQTT_PORT", "1883"))
 mqttc = mqtt.Client(protocol=mqtt.MQTTv5)
 
-mqtt_user = os.environ.get("MQTT_USER", "dmx")
-mqtt_password = os.environ.get("MQTT_PASSWORD", "test1234")
+mqtt_user = options.get('mqtt_user') # os.environ.get("MQTT_USER", "dmx")
+mqtt_password = options.get('mqtt_password') # os.environ.get("MQTT_PASSWORD", "test1234")
 mqttc.username_pw_set(mqtt_user, mqtt_password)
 
 def send_dmx():
@@ -64,7 +94,7 @@ mqttc.on_message = on_mqtt_message
 mqttc.subscribe("dmx/set/+")
 mqttc.subscribe("dmx/rgb/+")
 
-print("MQTT connecting...")
+print(f"MQTT connecting to {mqtt_host}...")
 mqttc.loop_start()
 
 wrapper.Run()
