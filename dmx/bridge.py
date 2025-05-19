@@ -31,26 +31,22 @@ mqtt_password = options.get('mqtt_password') # os.environ.get("MQTT_PASSWORD", "
 mqttc.username_pw_set(mqtt_user, mqtt_password)
 
 wrapper = ClientWrapper()
-client = wrapper.Client()
-
-# def send_dmx():
-#     client.SendDmx(UNIVERSE, data, lambda state: None)
+ola = wrapper.Client()
 
 def send_dmx(light_num, r, g, b, brightness):
+    dmx_state[light_num] = {
+        "state": "ON" if brightness > 0 else "OFF",
+        "brightness": brightness,
+        "rgb_color": [r, g, b]
+    }
+    print(f'Updating Light #{light_num}: {json.dumps(dmx_state[light_num])}')
     channel_start = ((light_num - 1) * BYTES_PER_LIGHT) + 1
     data[channel_start] = int(brightness)
     data[channel_start + 1] = int(r)
     data[channel_start + 2] = int(g)
     data[channel_start + 3] = int(b)
 
-    ola_client.SendDmx(UNIVERSE, data, lambda state: None)
-
-    # Optional: update state for publishing
-    dmx_state[light_num] = {
-        "state": "ON" if brightness > 0 else "OFF",
-        "brightness": brightness,
-        "rgb_color": [r, g, b]
-    }
+    ola.SendDmx(UNIVERSE, data, lambda state: None)
     mqttc.publish(f'dmx/{light_num}/state', json.dumps(dmx_state[light_num]), retain=True)
 
 def publish_config():
