@@ -36,18 +36,14 @@ mqttc.username_pw_set(mqtt_user, mqtt_password)
 wrapper = ClientWrapper()
 ola = wrapper.Client()
 
-def send_dmx(light_num, r, g, b, brightness):
-    dmx_state[light_num] = {
-        "state": "ON" if brightness > 0 else "OFF",
-        "brightness": brightness,
-        "rgb_color": [r, g, b]
-    }
+def send_dmx(light_num):
+    dmx_state[light_num]['state'] = "ON" if dmx_state[light_num]['brightness'] > 0 else "OFF"
     print(f'Updating Light #{light_num}: {json.dumps(dmx_state[light_num])}')
     channel_start = ((light_num - 1) * BYTES_PER_LIGHT)
-    data[channel_start] = int(brightness)
-    data[channel_start + 1] = int(r)
-    data[channel_start + 2] = int(g)
-    data[channel_start + 3] = int(b)
+    data[channel_start] = int(dmx_state[light_num]['brightness'])
+    data[channel_start + 1] = int(dmx_state[light_num]['rgb_color'][0])
+    data[channel_start + 2] = int(dmx_state[light_num]['rgb_color'][1])
+    data[channel_start + 3] = int(dmx_state[light_num]['rgb_color'][2])
 
     ola.SendDmx(UNIVERSE, data, lambda state: None)
     mqttc.publish(f'dmx/{light_num}/state', json.dumps(dmx_state[light_num]), retain=True)
@@ -83,32 +79,16 @@ def on_mqtt_message(client_mqtt, userdata, msg):
             payload = json.loads(msg.payload.decode())
 
             if payload.get("state", "").upper() == "OFF":
-                send_dmx(light_num, 0, 0, 0, 0)
+                dmx_state[light_num]['brightness'] = 0
+                send_dmx(light_num)
                 return
 
-            brightness = payload.get("brightness", 255)
-            col = payload.get("color", {"r": 255, "g": 255, "b": 255})
-            send_dmx(light_num, col['r'], col['g'], col['b'], brightness)
-        # if topic_parts[1] == "set":  # dmx/set/<channel>
-        #     channel = int(topic_parts[2])
-        #     value = int(msg.payload)
-        #     data[channel] = value
-        #     send_dmx()
-
-        # elif topic_parts[1] == "rgb":  # dmx/set/rgb/<base_channel>
-        #     base = int(topic_parts[2])
-        #     payload = msg.payload.decode()
-        #     # Accept both comma-separated or JSON string formats
-        #     if ',' in payload:
-        #         r, g, b = map(int, payload.strip().split(','))
-        #     else:
-        #         import json
-        #         rgb = json.loads(payload)
-        #         r, g, b = rgb['r'], rgb['g'], rgb['b']
-        #     data[base + 1] = r
-        #     data[base + 2] = g
-        #     data[base + 3] = b
-        #     send_dmx()
+            if 'brightness' in payload:
+                dmx_state[light_num]['brightness'] = payload.get("brightness", 255)
+            if 'color' in payload:
+                col = payload.get("color")
+                dmx_state[light_num]['rgb_color'] = [col['r'], col['g'], col['b']]
+            send_dmx(light_num)
     except Exception as e:
         print("MQTT parse error:", e)
 
