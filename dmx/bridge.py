@@ -5,17 +5,9 @@ print(sys.path)
 sys.path.append('/usr/local/lib/python3.9/site-packages')
 
 import array
-print("MQTT startup2...")
-
 import paho.mqtt.client as mqtt
-print("MQTT startup3...")
-
 from ola.ClientWrapper import ClientWrapper
-print("MQTT startup4...")
-
 import os
-
-print("MQTT startup...")
 
 UNIVERSE = 1
 DMX_SIZE = 512
@@ -61,13 +53,15 @@ def on_mqtt_message(client_mqtt, userdata, msg):
 
 
 def on_connect(client, userdata, flags, reasonCode, properties):
-    print(f"MQTT connected with reason code: {reasonCode}")
+    print("MQTT connected")
 
 mqttc.on_connect = on_connect
 mqttc.connect(mqtt_host, mqtt_port, 60)
 mqttc.on_message = on_mqtt_message
 mqttc.subscribe("dmx/set/+")
 mqttc.subscribe("dmx/rgb/+")
+
+print("MQTT connecting...")
 mqttc.loop_start()
 
 wrapper.Run()
