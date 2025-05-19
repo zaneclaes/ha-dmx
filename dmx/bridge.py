@@ -1,5 +1,9 @@
 print("MQTT startup...")
 
+import sys
+print(sys.path)
+sys.path.append('/usr/local/lib/python3.X/site-packages')
+
 import array
 print("MQTT startup2...")
 

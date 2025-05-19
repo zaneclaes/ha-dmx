@@ -15,5 +15,7 @@ ola_dev_info
 
 echo "--- bridge ---"
 
+find /usr/local -type d -name ola
+
 # Start dmx2mqtt (customize with env vars if needed)
 python3 -u /app/bridge.py
