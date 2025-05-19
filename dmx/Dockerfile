@@ -38,14 +38,11 @@ RUN git clone https://github.com/OpenLightingProject/ola.git /ola
 # Patch OLA to disable root check and Avahi
 WORKDIR /ola
 RUN autoreconf -i && \
-    ./configure --disable-root-check --disable-avahi && \
+    ./configure --disable-root-check --disable-avahi --enable-python-libs && \
     make -j$(nproc) && \
     make install
 
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/ola.conf && ldconfig
-
-WORKDIR /ola/python
-RUN python3 setup.py install
 
 WORKDIR /app
 COPY bridge.py /app/
