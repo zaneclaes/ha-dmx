@@ -25,7 +25,7 @@ def send_dmx():
     client.SendDmx(UNIVERSE, data, lambda state: None)
 
 def on_mqtt_message(client_mqtt, userdata, msg):
-    print(msg.topic)
+    print(f'{msg.topic}: {msg.payload}')
     topic_parts = msg.topic.split('/')
     try:
         if topic_parts[1] == "set":  # dmx/set/<channel>
@@ -44,9 +44,9 @@ def on_mqtt_message(client_mqtt, userdata, msg):
                 import json
                 rgb = json.loads(payload)
                 r, g, b = rgb['r'], rgb['g'], rgb['b']
-            data[base] = r
-            data[base + 1] = g
-            data[base + 2] = b
+            data[base + 1] = r
+            data[base + 2] = g
+            data[base + 3] = b
             send_dmx()
     except Exception as e:
         print("MQTT parse error:", e)

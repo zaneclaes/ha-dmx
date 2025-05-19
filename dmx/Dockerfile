@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y \
     autoconf \
     automake \
     libtool \
-    pkg-config \
     bison \
     flex \
     libcppunit-dev \
@@ -54,7 +53,7 @@ RUN chmod +x /run.sh
 
 # Create runtime directories
 RUN mkdir -p /root/.ola
-COPY ola/ /home/root/.ola/
+COPY ola/ /root/.ola/
 
 EXPOSE 9090
 CMD ["/run.sh"]
