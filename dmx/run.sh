@@ -11,6 +11,8 @@ sleep 3
 
 ola_dev_info
 
+netstat -tlnp | grep 9090
+
 # ola_patch -d 0 -u 1
 
 echo "--- bridge ---"
