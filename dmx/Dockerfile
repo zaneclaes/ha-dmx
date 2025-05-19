@@ -44,6 +44,9 @@ RUN autoreconf -i && \
 
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/ola.conf && ldconfig
 
+WORKDIR /ola/python
+RUN python3 setup.py install
+
 WORKDIR /app
 COPY bridge.py /app/
 COPY requirements.txt /app/
