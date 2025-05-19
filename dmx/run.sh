@@ -1,9 +1,9 @@
 #!/bin/bash
 
+sudo chgrp dmxuser /dev/ttyUSB0
 sudo chmod 666 /dev/ttyUSB0
 ls /dev/ttyUSB*
 ls -l /dev/serial/by-id/
-
 
 # Start OLA
 /usr/bin/olad -l 4 &
