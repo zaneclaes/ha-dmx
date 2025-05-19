@@ -10,16 +10,19 @@ import time
 import paho.mqtt.client as mqtt
 from ola.ClientWrapper import ClientWrapper
 import os
+import math
 
 UNIVERSE = 1
 DMX_SIZE = 512
-BYTES_PER_LIGHT = 4
-NUM_LIGHTS = int(DMX_SIZE / BYTES_PER_LIGHT)
 data = array.array('B', [0] * DMX_SIZE)
 dmx_state = {}
 
 with open('/data/options.json', 'r') as f:
     options = json.load(f)
+
+
+BYTES_PER_LIGHT = options.get('light_bytes')
+NUM_LIGHTS = int(math.floor(DMX_SIZE / BYTES_PER_LIGHT))
 
 # MQTT config
 mqtt_host = options.get('mqtt_host') # os.environ.get("MQTT_HOST", "core-mosquitto")
@@ -40,7 +43,7 @@ def send_dmx(light_num, r, g, b, brightness):
         "rgb_color": [r, g, b]
     }
     print(f'Updating Light #{light_num}: {json.dumps(dmx_state[light_num])}')
-    channel_start = ((light_num - 1) * BYTES_PER_LIGHT) + 1
+    channel_start = ((light_num - 1) * BYTES_PER_LIGHT)
     data[channel_start] = int(brightness)
     data[channel_start + 1] = int(r)
     data[channel_start + 2] = int(g)
