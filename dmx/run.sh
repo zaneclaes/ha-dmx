@@ -4,7 +4,7 @@ set -ueo pipefail
 echo "--- ola ---"
 
 # Start OLA
-/usr/bin/olad -l 4 &
+olad -l 4 &
 
 # Wait a bit for OLA to start
 sleep 3

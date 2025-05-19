@@ -42,6 +42,8 @@ RUN autoreconf -i && \
     make -j$(nproc) && \
     make install
 
+RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/ola.conf && ldconfig
+
 WORKDIR /app
 COPY bridge.py /app/
 COPY requirements.txt /app/
