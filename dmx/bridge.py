@@ -19,7 +19,10 @@ client = wrapper.Client()
 mqtt_host = os.environ.get("MQTT_HOST", "core-mosquitto")
 mqtt_port = int(os.environ.get("MQTT_PORT", "1883"))
 mqttc = mqtt.Client(protocol=mqtt.MQTTv5)
-mqttc.username_pw_set("dmx", "test1234")
+
+mqtt_user = os.environ.get("MQTT_USER", "dmx")
+mqtt_password = os.environ.get("MQTT_PASSWORD", "test1234")
+mqttc.username_pw_set(mqtt_user, mqtt_password)
 
 def send_dmx():
     client.SendDmx(UNIVERSE, data, lambda state: None)
