@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
     libprotobuf-dev \
     libprotoc-dev \
     uuid-dev \
+    jq \
     wget
 
 # Clone OLA source
