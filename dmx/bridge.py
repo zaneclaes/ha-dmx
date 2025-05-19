@@ -3,6 +3,8 @@ import paho.mqtt.client as mqtt
 from ola.ClientWrapper import ClientWrapper
 import os
 
+print("MQTT startup...")
+
 UNIVERSE = 1
 DMX_SIZE = 512
 data = array.array('B', [0] * DMX_SIZE)
@@ -47,7 +49,7 @@ def on_mqtt_message(client_mqtt, userdata, msg):
 
 
 def on_connect(client, userdata, flags, reasonCode, properties):
-    print(f"Connected with reason code: {reasonCode}")
+    print(f"MQTT connected with reason code: {reasonCode}")
 
 mqttc.on_connect = on_connect
 mqttc.connect(mqtt_host, mqtt_port, 60)

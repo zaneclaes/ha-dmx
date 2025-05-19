@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ueo pipefail
+# set -ueo pipefail
 
 echo "--- ola ---"
 
@@ -10,8 +10,6 @@ olad -l 4 &
 sleep 3
 
 ola_dev_info
-
-netstat -tlnp | grep 9090
 
 # ola_patch -d 0 -u 1
 
