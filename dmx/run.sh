@@ -12,7 +12,7 @@ sleep 3
 echo "--- devices ---"
 ola_dev_info
 
-# ola_patch -d 0 -u 1
+ola_patch -u 1 -d 2 -p 0
 
 echo "--- bridge ---"
 
