@@ -14,7 +14,7 @@ import os
 UNIVERSE = 1
 DMX_SIZE = 512
 BYTES_PER_LIGHT = 4
-NUM_LIGHTS = DMX_SIZE / BYTES_PER_LIGHT
+NUM_LIGHTS = int(DMX_SIZE / BYTES_PER_LIGHT)
 data = array.array('B', [0] * DMX_SIZE)
 dmx_state = {}
 
