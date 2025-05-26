@@ -96,7 +96,7 @@ class DmxLight:
     for key, attr in self.attributes.items():
       attrs[key] = attr.get_current().name
     self.mqttc.publish(self.config['json_attributes_topic'], json.dumps(attrs), retain=True)
-    print(f'Attrs: {self.config}')
+    print(f'Attrs: {attrs}')
 
   def publish_config(self):
     self.mqttc.publish(self.config_topic, json.dumps(self.config), retain=True)
@@ -134,6 +134,7 @@ class DmxLight:
 
     self.publish_config()
     self.publish_attributes()
+    self.publish_state()
 
     # self.set_attribute('pattern', 'bar')
     # print(f'{uid}: {self.channels} {self.attributes}')

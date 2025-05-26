@@ -53,9 +53,10 @@ def set_light_state(light, payload):
         if state == "ON":
             if light.state['brightness'] == 0:
                 light.set_brightness(255)
-            col = payload.get("color")
-            if col['r'] == 0 and col['g'] == 0 and col['b'] == 0:
-                light.set_rgb(255, 255, 255)
+            if 'color' in payload:
+                col = payload.get("color")
+                if col['r'] == 0 and col['g'] == 0 and col['b'] == 0:
+                    light.set_rgb(255, 255, 255)
         if state == "OFF" and light.state['brightness'] > 0:
             light.set_brightness(0)
     if 'color' in payload:
