@@ -5,8 +5,8 @@ print(sys.path)
 sys.path.append('/usr/local/lib/python3.9/site-packages')
 
 import array
-import json
 import time
+import json
 import paho.mqtt.client as mqtt
 from ola.ClientWrapper import ClientWrapper
 import os

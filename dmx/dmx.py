@@ -1,4 +1,5 @@
 import yaml
+import json
 
 class DmxOption:
   def __init__(self, name, val):
