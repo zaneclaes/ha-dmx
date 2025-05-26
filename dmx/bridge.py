@@ -20,6 +20,7 @@ data = array.array('B', [0] * DMX_SIZE)
 with open('/data/options.json', 'r') as f:
     options = json.load(f)
 
+print(options)
 
 BYTES_PER_LIGHT = options.get('light_bytes')
 NUM_LIGHTS = int(math.floor(DMX_SIZE / BYTES_PER_LIGHT))
@@ -83,7 +84,7 @@ def on_mqtt_message(client_mqtt, userdata, msg):
 
 def on_connect(client, userdata, flags, reasonCode, properties):
     print("MQTT connected")
-    for key, data in options['lights'].items():
+    for key, data in options.get('lights').items():
       lights[key] = DmxLight(key, data, mqttc, write_byte)
 
 mqttc.on_connect = on_connect
