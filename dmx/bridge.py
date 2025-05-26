@@ -84,8 +84,8 @@ def on_mqtt_message(client_mqtt, userdata, msg):
 
 def on_connect(client, userdata, flags, reasonCode, properties):
     print("MQTT connected")
-    for key, data in options.get('lights').items():
-      lights[key] = DmxLight(key, data, mqttc, write_byte)
+    for data in options.get('lights'):
+      lights[data['name']] = DmxLight(data, mqttc, write_byte)
 
 mqttc.on_connect = on_connect
 mqttc.connect(mqtt_host, mqtt_port, 60)

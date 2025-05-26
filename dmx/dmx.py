@@ -27,7 +27,8 @@ class DmxAttribute:
   def publish_config(self):
     self.mqttc.publish(self.config_topic, json.dumps(self.config), retain=True)
 
-  def __init__(self, parent_uid, name, data, mqttc):
+  def __init__(self, parent_uid, data, mqttc):
+    name = data['name']
     self.name = name
     self.mqttc = mqttc
     self.uid = f'{parent_uid}-{name}'
@@ -37,18 +38,12 @@ class DmxAttribute:
     self.config['unique_id'] = self.uid
     self.config['command_topic'] = f'dmx/{self.uid}/set'
     self.config['state_topic'] = f'dmx/{self.uid}/state'
-    val = 0
     for option in data['options']:
-      if isinstance(option, dict):
-        opt_name = next(iter(option))
-        val = option[opt_name]
-      else:
-        opt_name = option
-      self.options[opt_name] = DmxOption(opt_name, val)
+      opt_name = option['name']
+      self.options[opt_name] = DmxOption(opt_name, option['value'])
       self.config['options'].append(opt_name)
       if not self.state:
         self.state = opt_name
-      val = val + 1
 
     if self.mqttc: self.publish_config()
     else: print(self.config)
@@ -104,7 +99,8 @@ class DmxLight:
   def publish_config(self):
     self.mqttc.publish(self.config_topic, json.dumps(self.config), retain=True)
 
-  def __init__(self, uid, data, mqttc, writer):
+  def __init__(self, data, mqttc, writer):
+    uid = data['name']
     self.uid = uid
     self.mqttc = mqttc
     self.writer = writer
@@ -128,10 +124,9 @@ class DmxLight:
       self.state['color_mode'] = 'rgb'
       self.state['rgb_color'] = [255, 255, 255]
 
-    opt_names = data.keys() - ['brightness', 'red', 'green', 'blue']
-    for name in opt_names:
-      self.attributes[name] = DmxAttribute(uid, name, data[name], mqttc)
-      self.update_attribute(name)
+    for attr in data['attributes']:
+      self.attributes[attr['name']] = DmxAttribute(uid, attr[name], mqttc)
+      self.update_attribute(attr['name'])
 
     if mqttc: self.publish_config
     self.publish_attributes()
