@@ -81,7 +81,6 @@ def on_mqtt_message(client_mqtt, userdata, msg):
     except Exception as e:
         print("MQTT parse error:", e)
 
-
 def on_connect(client, userdata, flags, reasonCode, properties):
     print("MQTT connected")
     for data in options.get('lights'):

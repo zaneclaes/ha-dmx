@@ -90,15 +90,18 @@ class DmxLight:
 
   def publish_state(self):
     self.mqttc.publish(self.config['state_topic'], json.dumps(self.state), retain=True)
+    print(f'State: {self.config}')
 
   def publish_attributes(self):
     attrs = {}
     for key, attr in self.attributes.items():
       attrs[key] = attr.get_current().name
     if (self.mqttc): self.mqttc.publish(self.config['json_attributes_topic'], json.dumps(attrs), retain=True)
+    print(f'Attrs: {self.config}')
 
   def publish_config(self):
     self.mqttc.publish(self.config_topic, json.dumps(self.config), retain=True)
+    print(f'Config: {self.config}')
 
   def __init__(self, data, mqttc, writer):
     uid = data['name']
