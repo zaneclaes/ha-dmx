@@ -68,18 +68,18 @@ def on_mqtt_message(client_mqtt, userdata, msg):
     print(f'{msg.topic}: {msg.payload}')
     parts = msg.topic.split('/')
 
-    try:
-        light = lights[parts[1]]
-        if not light:
-            print(f'Missing light: {parts[1]}')
-        elif parts[2] == 'set':
-            set_light_state(light, json.loads(msg.payload.decode()))
-        elif parts[2] == 'attribute':
-            light.set_attribute(parts[3], msg.payload)
-            send_bytes()
-            light.publish_attributes()
-    except Exception as e:
-        print("MQTT parse error:", e)
+    # try:
+    light = lights[parts[1]]
+    if not light:
+        print(f'Missing light: {parts[1]}')
+    elif parts[2] == 'set':
+        set_light_state(light, json.loads(msg.payload.decode()))
+    elif parts[2] == 'attribute':
+        light.set_attribute(parts[3], msg.payload)
+        send_bytes()
+        light.publish_attributes()
+    # except Exception as e:
+    #     print("MQTT parse error:", e)
 
 def on_connect(client, userdata, flags, reasonCode, properties):
     print("MQTT connected")
