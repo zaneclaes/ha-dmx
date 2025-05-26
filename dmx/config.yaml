@@ -26,12 +26,7 @@ options:
       red: 2
       blue: 3
       green: 4
-      pattern:
-        channel: 5
-        options:
-          - foo: 1
-          - bar
-          - baz
+      attributes: ''
 schema:
   device: device(subsystem=tty)
   light_bytes: int
@@ -47,7 +42,7 @@ schema:
     red: int
     blue: int
     green: int
-    # attributes:
+    attributes: str
     # - name: str
     #   channel: int
       #     options:

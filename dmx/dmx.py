@@ -124,7 +124,8 @@ class DmxLight:
       self.state['color_mode'] = 'rgb'
       self.state['rgb_color'] = [255, 255, 255]
 
-    for attr in data['attributes']:
+    attributes = json.loads(data['attributes'])
+    for attr in attributes:
       self.attributes[attr['name']] = DmxAttribute(uid, attr[name], mqttc)
       self.update_attribute(attr['name'])
 
