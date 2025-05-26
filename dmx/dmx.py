@@ -89,7 +89,7 @@ class DmxLight:
 
   def publish_state(self):
     self.mqttc.publish(self.config['state_topic'], json.dumps(self.state), retain=True)
-    print(f'State: {self.config}')
+    print(f'State: {self.state}')
 
   def publish_attributes(self):
     attrs = {}
