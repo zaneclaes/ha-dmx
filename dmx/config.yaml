@@ -47,9 +47,9 @@ schema:
       red: int
       blue: int
       green: int
-      # attributes:
-      #   - name: str
-      #     channel: int
+      attributes:
+        - name: str
+          channel: int
       #     options:
       #       - name: str
       #         value: int
