@@ -42,14 +42,14 @@ schema:
   mqtt_user: str
   mqtt_password: password
   lights:
+  - name: str
+    brightness: int
+    red: int
+    blue: int
+    green: int
+    attributes:
     - name: str
-      brightness: int
-      red: int
-      blue: int
-      green: int
-      attributes:
-        - name: str
-          channel: int
+      channel: int
       #     options:
       #       - name: str
       #         value: int
