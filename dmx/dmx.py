@@ -22,8 +22,8 @@ class DmxAttribute:
     self.state = value
 
   def publish_state(self):
-    if self.mqttc: self.mqttc.publish(self.config['state_topic'], json.dumps(self.state), retain=True)
-    else: print(self.state)
+    self.mqttc.publish(self.config['state_topic'], json.dumps(self.state), retain=True)
+    print(self.state)
 
   def publish_config(self):
     self.mqttc.publish(self.config_topic, json.dumps(self.config), retain=True)
@@ -46,8 +46,7 @@ class DmxAttribute:
       if not self.state:
         self.state = opt_name
 
-    if self.mqttc: self.publish_config()
-    else: print(self.config)
+    self.publish_config()
 
 class DmxLight:
   channels = {}
@@ -96,7 +95,7 @@ class DmxLight:
     attrs = {}
     for key, attr in self.attributes.items():
       attrs[key] = attr.get_current().name
-    if (self.mqttc): self.mqttc.publish(self.config['json_attributes_topic'], json.dumps(attrs), retain=True)
+    self.mqttc.publish(self.config['json_attributes_topic'], json.dumps(attrs), retain=True)
     print(f'Attrs: {self.config}')
 
   def publish_config(self):
@@ -133,7 +132,7 @@ class DmxLight:
       self.attributes[attr['name']] = DmxAttribute(uid, attr[name], mqttc)
       self.update_attribute(attr['name'])
 
-    if mqttc: self.publish_config
+    self.publish_config()
     self.publish_attributes()
 
     # self.set_attribute('pattern', 'bar')
