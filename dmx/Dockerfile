@@ -46,10 +46,11 @@ RUN autoreconf -i && \
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/ola.conf && ldconfig
 
 WORKDIR /app
-COPY bridge.py /app/
-COPY dmx.py /app/
 COPY requirements.txt /app/
 RUN pip3 install -r requirements.txt
+
+COPY bridge.py /app/
+COPY dmx.py /app/
 
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
