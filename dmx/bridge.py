@@ -11,11 +11,11 @@ import paho.mqtt.client as mqtt
 from ola.ClientWrapper import ClientWrapper
 import os
 import math
+from dmx import DmxLight
 
 UNIVERSE = 1
 DMX_SIZE = 512
 data = array.array('B', [0] * DMX_SIZE)
-dmx_state = {}
 
 with open('/data/options.json', 'r') as f:
     options = json.load(f)
@@ -36,86 +36,61 @@ mqttc.username_pw_set(mqtt_user, mqtt_password)
 wrapper = ClientWrapper()
 ola = wrapper.Client()
 
-def send_dmx(light_num):
-    dmx_state[light_num]['state'] = "ON" if dmx_state[light_num]['brightness'] > 0 else "OFF"
-    dmx_state[light_num]['rgb_color'] = [
-        int(dmx_state[light_num]['color']['r']),
-        int(dmx_state[light_num]['color']['g']),
-        int(dmx_state[light_num]['color']['b'])
-    ]
-    print(f'Updating Light #{light_num}: {json.dumps(dmx_state[light_num])}')
-    channel_start = ((light_num - 1) * BYTES_PER_LIGHT)
-    data[channel_start] = int(dmx_state[light_num]['brightness'])
-    data[channel_start + 1] = int(dmx_state[light_num]['color']['r'])
-    data[channel_start + 2] = int(dmx_state[light_num]['color']['g'])
-    data[channel_start + 3] = int(dmx_state[light_num]['color']['b'])
+lights = {}
 
+def send_bytes():
     ola.SendDmx(UNIVERSE, data, lambda state: None)
-    mqttc.publish(f'dmx/{light_num}/state', json.dumps(dmx_state[light_num]), retain=True)
 
-def publish_config():
-    for fixture in range(1, NUM_LIGHTS):  # 3 channels per RGB fixture
-        config_topic = f"homeassistant/light/dmx_{fixture}/config"
-        mqttc.publish(config_topic, json.dumps({
-            "name": f"DMX RGB Light {fixture}",
-            "unique_id": f"dmx_{fixture}",
-            "schema": "json",
-            "command_topic": f"dmx/{fixture}/set",
-            "state_topic": f"dmx/{fixture}/state",
-            "brightness": True,
-            "color_mode": True,
-            "supported_color_modes": ["rgb"]
-        }), retain=True)
-        dmx_state[fixture] = {
-            "state": "OFF",
-            "brightness": 0,
-            'color_mode': 'rgb',
-            "color": {'r': 255, 'g': 255, 'b': 255},
-            'rgb_color': [255, 255, 255]
-        }
-        mqttc.publish(f'dmx/{fixture}/state', json.dumps(dmx_state[fixture]), retain=True)
+def write_byte(idx, val):
+    data[idx] = val
+
+def set_light_state(light, payload):
+    if 'brightness' in payload:
+        light.set_brightness(payload.get("brightness", 255))
+    if 'state' in payload:
+        state = payload.get('state')
+        if state == "ON":
+            if light.state['brightness'] == 0:
+                light.set_brightness(255)
+            col = payload.get("color")
+            if col['r'] == 0 and col['g'] == 0 and col['b'] == 0:
+                light.set_rgb(255, 255, 255)
+        if state == "OFF" and light.state['brightness'] > 0:
+            light.set_brightness(0)
+    if 'color' in payload:
+        col = payload.get("color")
+        light.set_rgb(col['r'], col['g'], col['b'])
+    send_bytes()
+    light.publish_state()
 
 def on_mqtt_message(client_mqtt, userdata, msg):
     print(f'{msg.topic}: {msg.payload}')
     parts = msg.topic.split('/')
+
     try:
-        if parts[0] == 'dmx' and parts[2] == 'set':
-            light_num = int(parts[1])
-            if light_num <= 0 or light_num > NUM_LIGHTS:
-                raise f'Invalid light num {light_num}'
-            payload = json.loads(msg.payload.decode())
-
-            if payload.get("state", "").upper() == "OFF":
-                dmx_state[light_num]['brightness'] = 0
-                send_dmx(light_num)
-                return
-
-            if 'brightness' in payload:
-                dmx_state[light_num]['brightness'] = payload.get("brightness", 255)
-            if 'state' in payload:
-                state = payload.get('state')
-                if state == "ON":
-                    if dmx_state[light_num]['brightness'] == 0:
-                        dmx_state[light_num]['brightness'] = 255
-                    if dmx_state[light_num]['color']['r'] == 0 and dmx_state[light_num]['color']['g'] == 0 and dmx_state[light_num]['color']['b'] == 0:
-                        dmx_state[light_num]['color'] = {'r': 255, 'g': 255, 'b': 255}
-                if state == "OFF" and dmx_state[light_num]['brightness'] > 0:
-                    dmx_state[light_num]['brightness'] = 0
-            if 'color' in payload:
-                dmx_state[light_num]['color'] = payload.get("color")
-            send_dmx(light_num)
+        light = lights[parts[1]]
+        if !light:
+            print(f'Missing light: {parts[1]}')
+        elif parts[2] == 'set':
+            set_light_state(light, json.loads(msg.payload.decode()))
+        elif parts[2] == 'attribute':
+            light.set_attribute(parts[3], msg.payload)
+            send_bytes()
+            light.publish_attributes()
     except Exception as e:
         print("MQTT parse error:", e)
 
 
 def on_connect(client, userdata, flags, reasonCode, properties):
     print("MQTT connected")
-    publish_config()
+    for key, data in options['lights'].items():
+      lights[key] = DmxLight(key, data, mqttc, write_byte)
 
 mqttc.on_connect = on_connect
 mqttc.connect(mqtt_host, mqtt_port, 60)
 mqttc.on_message = on_mqtt_message
 mqttc.subscribe("dmx/+/set")
+mqttc.subscribe("dmx/+/attribute/+")
 
 print(f"MQTT connecting to {mqtt_host}...")
 mqttc.loop_start()
