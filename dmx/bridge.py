@@ -69,7 +69,7 @@ def on_mqtt_message(client_mqtt, userdata, msg):
 
     try:
         light = lights[parts[1]]
-        if !light:
+        if not light:
             print(f'Missing light: {parts[1]}')
         elif parts[2] == 'set':
             set_light_state(light, json.loads(msg.payload.decode()))
