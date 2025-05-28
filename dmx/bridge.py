@@ -53,10 +53,6 @@ def set_light_state(light, payload):
         if state == "ON":
             if light.state['brightness'] == 0:
                 light.set_brightness(255)
-            if 'color' in payload:
-                col = payload.get("color")
-                if col['r'] == 0 and col['g'] == 0 and col['b'] == 0:
-                    light.set_rgb(255, 255, 255)
         if state == "OFF" and light.state['brightness'] > 0:
             light.set_brightness(0)
     if 'color' in payload:
@@ -91,7 +87,7 @@ mqttc.on_connect = on_connect
 mqttc.connect(mqtt_host, mqtt_port, 60)
 mqttc.on_message = on_mqtt_message
 mqttc.subscribe("dmx/+/set")
-mqttc.subscribe("dmx/+/attribute/+")
+mqttc.subscribe("dmx/+/attribute/+/set")
 
 print(f"MQTT connecting to {mqtt_host}...")
 mqttc.loop_start()

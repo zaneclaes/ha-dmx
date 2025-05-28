@@ -36,8 +36,8 @@ class DmxAttribute:
     self.config_topic = f"homeassistant/select/dmx_{self.uid}/config"
     self.config['name'] = f'{parent_uid} {name}'
     self.config['unique_id'] = self.uid
-    self.config['command_topic'] = f'dmx/{self.uid}/set'
-    self.config['state_topic'] = f'dmx/{self.uid}/state'
+    self.config['command_topic'] = f'dmx/{parent_uid}/attribute/{name}/set'
+    self.config['state_topic'] = f'dmx/{parent_uid}/attribute/{name}/state'
     for option in data['options']:
       opt_name = option['name']
       self.options[opt_name] = DmxOption(opt_name, option['value'])
@@ -69,6 +69,10 @@ class DmxLight:
       self.writer(self.channels['brightness'], brightness)
     else:
       print(f'Brightness not supported for {self.uid}')
+
+    if 'red' in self.channels or 'green' in self.channels or 'blue' in self.channels:
+      if brightness > 0 and self.state['color']['r'] == 0 and self.state['color']['g'] == 0 and self.state['color']['b'] == 0
+        self.set_rgb(255, 255, 255)
 
   def update_attribute(self, name):
     cur = self.attributes[name].get_current()
