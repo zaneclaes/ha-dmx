@@ -7,14 +7,6 @@ class DmxOption:
     self.val = val
 
 class DmxAttribute:
-  options = {}
-  state = ''
-  channel = 0
-
-  config = {
-    "options": []
-  }
-
   def get_current(self):
     return self.options[self.state]
 
@@ -30,6 +22,12 @@ class DmxAttribute:
 
   def __init__(self, parent_uid, data, mqttc):
     name = data['name']
+    self.options = {}
+    self.state = ''
+    self.channel = 0
+    self.config = {
+      "options": []
+    }
     self.name = name
     self.mqttc = mqttc
     self.uid = f'{parent_uid}-{name}'
@@ -49,17 +47,6 @@ class DmxAttribute:
     self.publish_config()
 
 class DmxLight:
-  channels = {}
-  attributes = {}
-
-  state = {
-    "state": "OFF",
-  }
-
-  config = {
-    "schema": "json"
-  }
-
   def set_state(self, on):
     self.state['state'] = "ON" if on else "OFF"
 
@@ -90,7 +77,7 @@ class DmxLight:
   def publish_state(self):
     topic = self.config['state_topic']
     self.mqttc.publish(topic, json.dumps(self.state), retain=True)
-    print(f'[{self.uid}] {topic} {self.config}: {self.state}')
+    print(f'[{self.uid}] {topic}: {self.state}')
 
   def publish_attributes(self):
     attrs = {}
@@ -98,23 +85,31 @@ class DmxLight:
       attrs[key] = attr.get_current().name
     topic = self.config['json_attributes_topic']
     self.mqttc.publish(topic, json.dumps(attrs), retain=True)
-    print(f'[{self.uid}] {topic} {self.config}: {attrs}')
+    print(f'[{self.uid}] {topic}: {attrs}')
 
   def publish_config(self):
     self.mqttc.publish(self.config_topic, json.dumps(self.config), retain=True)
-    print(f'[{self.uid}] {self.config_topic} {self.config}: {self.config}')
+    print(f'[{self.uid}] {self.config_topic}: {self.config}')
 
   def __init__(self, data, mqttc, writer):
     self.uid = data['name']
     self.mqttc = mqttc
     self.writer = writer
     self.config_topic = f"homeassistant/light/dmx_{self.uid}/config"
+    self.config = {
+      "schema": "json"
+    }
     self.config['name'] = self.uid
     self.config['unique_id'] = self.uid
     self.config['command_topic'] = f'dmx/{self.uid}/set'
     self.config['state_topic'] = f'dmx/{self.uid}/state'
     self.config['json_attributes_topic'] = f'dmx/{self.uid}/attributes'
 
+    self.state = {
+      "state": "OFF",
+    }
+
+    self.channels = {}
     self.channels['brightness'] = data['brightness']
     self.channels['red'] = data['red']
     self.channels['green'] = data['green']
@@ -128,6 +123,7 @@ class DmxLight:
       self.state['color_mode'] = 'rgb'
       self.state['rgb_color'] = [255, 255, 255]
 
+    self.attributes = {}
     attributes = json.loads(data['attributes'])
     for attr in attributes:
       self.attributes[attr['name']] = DmxAttribute(self.uid, attr[name], mqttc)
