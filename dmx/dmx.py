@@ -51,9 +51,9 @@ class DmxLight:
     self.state['state'] = "ON" if on else "OFF"
 
   def set_rgb(self, r, g, b):
-    self.state['rgb_color'][0] = r
-    self.state['rgb_color'][1] = g
-    self.state['rgb_color'][2] = b
+    self.state['color']['r'] = r
+    self.state['color']['g'] = g
+    self.state['color']['b'] = b
     self.writer(self.channels['red'], r)
     self.writer(self.channels['green'], g)
     self.writer(self.channels['blue'], b)
@@ -121,7 +121,7 @@ class DmxLight:
       self.config['color_mode'] = True
       self.config['supported_color_modes'] = ['rgb']
       self.state['color_mode'] = 'rgb'
-      self.state['rgb_color'] = [255, 255, 255]
+      self.state['color'] = {'r': 255, 'g': 255, 'b': 255}
 
     self.attributes = {}
     attributes = json.loads(data['attributes'])
