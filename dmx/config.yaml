@@ -2,7 +2,7 @@ name: "DMX Control Bridge"
 slug: dmx
 description: >
   A Home Assistant add-on to control DMX512-compatible lighting equipment using a USB-to-DMX interface.
-version: "1.4.21"
+version: "1.4.22"
 url: "https://github.com/zaneclaes/ha-dmx"
 arch:
   - amd64
@@ -22,11 +22,6 @@ options:
   mqtt_password: ""
   lights:
     - name: uplight_1
-      brightness: 1
-      red: 2
-      blue: 3
-      green: 4
-      attributes: ''
 schema:
   device: device(subsystem=tty)
   light_bytes: int
@@ -38,11 +33,11 @@ schema:
   mqtt_password: password
   lights:
   - name: str
-    brightness: int
-    red: int
-    blue: int
-    green: int
-    attributes: str
+    brightness: int?
+    red: int?
+    blue: int?
+    green: int?
+    attributes: str?
     # - name: str
     #   channel: int
       #     options:
