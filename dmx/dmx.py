@@ -11,7 +11,10 @@ class DmxAttribute:
     return self.options[self.state]
 
   def set_current(self, value):
-    self.state = value
+    if value in self.options:
+      self.state = value
+    else:
+      print(f'{value} is not an option in {self.options}')
 
   def publish_state(self):
     self.mqttc.publish(self.config['state_topic'], json.dumps(self.state), retain=True)
@@ -42,6 +45,8 @@ class DmxAttribute:
       opt_name = option['name']
       self.options[opt_name] = DmxOption(opt_name, option['value'])
       self.config['options'].append(opt_name)
+      if not self.default_state:
+        self.default_state = opt_name
       if not self.state:
         self.state = opt_name
 
