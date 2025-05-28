@@ -51,7 +51,7 @@ class DmxLight:
     self.state['state'] = "ON" if on else "OFF"
 
   def set_rgb(self, r, g, b):
-    if 'red' in data or 'green' in data or 'blue' in data:
+    if 'red' in self.channels or 'green' in self.channels or 'blue' in self.channels:
       self.state['color']['r'] = r
       self.state['color']['g'] = g
       self.state['color']['b'] = b
@@ -62,7 +62,7 @@ class DmxLight:
       print(f'RGB is not supported for {self.uid}')
 
   def set_brightness(self, brightness):
-    if 'brightness' in data:
+    if 'brightness' in self.channels:
       self.state['brightness'] = brightness
       self.set_state(brightness > 0)
       self.writer(self.channels['brightness'], brightness)
@@ -133,7 +133,7 @@ class DmxLight:
       self.state['color_mode'] = 'rgb'
       self.state['color'] = {'r': 255, 'g': 255, 'b': 255}
 
-    self.attributes = {}
+
     attributes = json.loads(data['attributes'] if 'attributes' in data else '[]')
     for attr in attributes:
       self.attributes[attr['name']] = DmxAttribute(self.uid, attr[name], mqttc)
