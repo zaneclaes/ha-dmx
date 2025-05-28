@@ -133,7 +133,7 @@ class DmxLight:
       self.state['color_mode'] = 'rgb'
       self.state['color'] = {'r': 255, 'g': 255, 'b': 255}
 
-
+    self.attributes = {}
     attributes = json.loads(data['attributes'] if 'attributes' in data else '[]')
     for attr in attributes:
       self.attributes[attr['name']] = DmxAttribute(self.uid, attr[name], mqttc)
