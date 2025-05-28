@@ -51,17 +51,23 @@ class DmxLight:
     self.state['state'] = "ON" if on else "OFF"
 
   def set_rgb(self, r, g, b):
-    self.state['color']['r'] = r
-    self.state['color']['g'] = g
-    self.state['color']['b'] = b
-    self.writer(self.channels['red'], r)
-    self.writer(self.channels['green'], g)
-    self.writer(self.channels['blue'], b)
+    if 'red' in data or 'green' in data or 'blue' in data:
+      self.state['color']['r'] = r
+      self.state['color']['g'] = g
+      self.state['color']['b'] = b
+      self.writer(self.channels['red'], r)
+      self.writer(self.channels['green'], g)
+      self.writer(self.channels['blue'], b)
+    else:
+      print(f'RGB is not supported for {self.uid}')
 
   def set_brightness(self, brightness):
-    self.state['brightness'] = brightness
-    self.set_state(brightness > 0)
-    self.writer(self.channels['brightness'], brightness)
+    if 'brightness' in data:
+      self.state['brightness'] = brightness
+      self.set_state(brightness > 0)
+      self.writer(self.channels['brightness'], brightness)
+    else:
+      print(f'Brightness not supported for {self.uid}')
 
   def update_attribute(self, name):
     cur = self.attributes[name].get_current()
@@ -110,10 +116,14 @@ class DmxLight:
     }
 
     self.channels = {}
-    self.channels['brightness'] = data['brightness']
-    self.channels['red'] = data['red']
-    self.channels['green'] = data['green']
-    self.channels['blue'] = data['blue']
+    if 'brightness' in data:
+      self.channels['brightness'] = data['brightness']
+    if 'red' in data:
+      self.channels['red'] = data['red']
+    if 'green' in data:
+      self.channels['green'] = data['green']
+    if 'blue' in data:
+      self.channels['blue'] = data['blue']
     if 'brightness' in data:
       self.config['brightness'] = True
       self.state['brightness'] = 0
