@@ -73,7 +73,7 @@ def on_mqtt_message(client_mqtt, userdata, msg):
         elif parts[2] == 'set':
             set_light_state(light, json.loads(msg.payload.decode()))
         elif parts[2] == 'attribute':
-            light.set_attribute(parts[3], msg.payload)
+            light.set_attribute(parts[3], msg.payload.decode(encoding="utf-8"))
             send_bytes()
             light.publish_attributes()
     except Exception as e:
