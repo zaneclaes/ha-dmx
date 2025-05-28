@@ -66,7 +66,7 @@ def set_light_state(light, payload):
     light.publish_state()
 
 def on_mqtt_message(client_mqtt, userdata, msg):
-    print(f'{msg.topic}: {msg.payload}')
+    # print(f'{msg.topic}: {msg.payload}')
     parts = msg.topic.split('/')
 
     # try:
