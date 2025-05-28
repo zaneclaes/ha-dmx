@@ -90,7 +90,7 @@ class DmxLight:
   def publish_state(self):
     topic = self.config['state_topic']
     self.mqttc.publish(topic, json.dumps(self.state), retain=True)
-    print(f'{topic}: {self.state}')
+    print(f'[{self.uid}] {topic}: {self.state}')
 
   def publish_attributes(self):
     attrs = {}
@@ -98,23 +98,22 @@ class DmxLight:
       attrs[key] = attr.get_current().name
     topic = self.config['json_attributes_topic']
     self.mqttc.publish(topic, json.dumps(attrs), retain=True)
-    print(f'{topic}: {attrs}')
+    print(f'[{self.uid}] {topic}: {attrs}')
 
   def publish_config(self):
     self.mqttc.publish(self.config_topic, json.dumps(self.config), retain=True)
-    print(f'{self.config_topic}: {self.config}')
+    print(f'[{self.uid}] {self.config_topic}: {self.config}')
 
   def __init__(self, data, mqttc, writer):
-    uid = data['name']
-    self.uid = uid
+    self.uid = data['name']
     self.mqttc = mqttc
     self.writer = writer
     self.config_topic = f"homeassistant/light/dmx_{self.uid}/config"
-    self.config['name'] = uid
-    self.config['unique_id'] = uid
-    self.config['command_topic'] = f'dmx/{uid}/set'
-    self.config['state_topic'] = f'dmx/{uid}/state'
-    self.config['json_attributes_topic'] = f'dmx/{uid}/attributes'
+    self.config['name'] = self.uid
+    self.config['unique_id'] = self.uid
+    self.config['command_topic'] = f'dmx/{self.uid}/set'
+    self.config['state_topic'] = f'dmx/{self.uid}/state'
+    self.config['json_attributes_topic'] = f'dmx/{self.uid}/attributes'
 
     self.channels['brightness'] = data['brightness']
     self.channels['red'] = data['red']
@@ -131,7 +130,7 @@ class DmxLight:
 
     attributes = json.loads(data['attributes'])
     for attr in attributes:
-      self.attributes[attr['name']] = DmxAttribute(uid, attr[name], mqttc)
+      self.attributes[attr['name']] = DmxAttribute(self.uid, attr[name], mqttc)
       self.update_attribute(attr['name'])
 
     self.publish_config()
