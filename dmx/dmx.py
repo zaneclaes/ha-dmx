@@ -26,7 +26,8 @@ class DmxAttribute:
   def __init__(self, parent_uid, data, mqttc):
     name = data['name']
     self.options = {}
-    self.state = ''
+    self.state = False
+    self.default_state = False
     self.channel = 0
     self.config = {
       "options": []
