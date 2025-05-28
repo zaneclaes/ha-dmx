@@ -90,7 +90,7 @@ class DmxLight:
   def publish_state(self):
     topic = self.config['state_topic']
     self.mqttc.publish(topic, json.dumps(self.state), retain=True)
-    print(f'[{self.uid}] {topic}: {self.state}')
+    print(f'[{self.uid}] {topic} {self.config}: {self.state}')
 
   def publish_attributes(self):
     attrs = {}
@@ -98,11 +98,11 @@ class DmxLight:
       attrs[key] = attr.get_current().name
     topic = self.config['json_attributes_topic']
     self.mqttc.publish(topic, json.dumps(attrs), retain=True)
-    print(f'[{self.uid}] {topic}: {attrs}')
+    print(f'[{self.uid}] {topic} {self.config}: {attrs}')
 
   def publish_config(self):
     self.mqttc.publish(self.config_topic, json.dumps(self.config), retain=True)
-    print(f'[{self.uid}] {self.config_topic}: {self.config}')
+    print(f'[{self.uid}] {self.config_topic} {self.config}: {self.config}')
 
   def __init__(self, data, mqttc, writer):
     self.uid = data['name']
