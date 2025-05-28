@@ -43,7 +43,7 @@ def send_bytes():
     ola.SendDmx(UNIVERSE, data, lambda state: None)
 
 def write_byte(idx, val):
-    data[idx] = val
+    data[idx - 1] = val # In reality, everything is zero-indexed, but channel names are 1-indexed
 
 def set_light_state(light, payload):
     if 'brightness' in payload:
