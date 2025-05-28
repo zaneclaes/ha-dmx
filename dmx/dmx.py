@@ -71,7 +71,7 @@ class DmxLight:
       print(f'Brightness not supported for {self.uid}')
 
     if 'red' in self.channels or 'green' in self.channels or 'blue' in self.channels:
-      if brightness > 0 and self.state['color']['r'] == 0 and self.state['color']['g'] == 0 and self.state['color']['b'] == 0
+      if brightness > 0 and self.state['color']['r'] == 0 and self.state['color']['g'] == 0 and self.state['color']['b'] == 0:
         self.set_rgb(255, 255, 255)
 
   def update_attribute(self, name):
